@@ -338,6 +338,36 @@ class SquareMatrix(Matrix):
             ret *= data[i][i]
         return ret
 
+    def rank(self):
+        data = copy.deepcopy(self.matrix)
+        n = self.size()[0]
+        if n == 1:
+            if data[0][0] == 0:
+                return Fraction(0)
+            return 1
+        last_line = 0
+        for ind in range(n):
+            ok = False
+            for new_line_ind in range(last_line, n):
+                new_line = data[new_line_ind]
+                if new_line[ind] != Fraction(0):
+                    data[new_line_ind], data[last_line] = \
+                        data[last_line], data[new_line_ind]
+                    ok = True
+                    break
+            if ok:
+                for new_line_ind in range(last_line + 1, n):
+                    if data[new_line_ind][ind] == Fraction(0):
+                        continue
+                    delta = data[last_line][ind] / \
+                        data[new_line_ind][ind]
+                    for x in range(n):
+                        data[new_line_ind][x] -= delta * data[last_line][x]
+                last_line += 1
+        return last_line
+
+
+
     def R(self, inds):
         data = self.matrix
         ret = []
